@@ -4,14 +4,13 @@ const admin = require('firebase-admin');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const cors = require('cors');
-
-// Kiểm tra các biến môi trường
 if (!process.env.FB_PRIVATE_KEY) {
   console.error("❌ Thiếu biến môi trường FB_PRIVATE_KEY");
+  console.log("ENV:", process.env);
   process.exit(1);
 }
 
-// Khởi tạo Firebase Admin
+// ✅ Khởi tạo Firebase Admin
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.FB_PROJECT_ID,
@@ -23,19 +22,17 @@ admin.initializeApp({
 const db = admin.firestore();
 const app = express();
 
-// CORS Configuration - Cho phép tất cả các domain Firebase Hosting hoặc Custom Domain
+// ✅ CORS cho cả local và production
 app.use(cors({
   origin: [
-    'https://your-project-id.web.app',   // Firebase Hosting URL
-    'https://your-custom-domain.com',     // Custom domain nếu có
-    'http://localhost:5500',              // Địa chỉ local khi phát triển
-    'http://127.0.0.1:5500',             // Cổng local khác
-    'http://localhost:3000'              // Cổng backend nếu có
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost:3000',
+    'https://myclass.web.app'
   ],
   methods: ['GET', 'POST'],
   credentials: false
 }));
-
 app.use(express.json());
 
 /* ---------------------- API ENABLE 2FA ---------------------- */
